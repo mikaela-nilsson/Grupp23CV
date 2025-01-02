@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Grupp23_CV.Models
 {
@@ -17,14 +18,18 @@ namespace Grupp23_CV.Models
 
         [Display(Name = "Startdatum")]
         public DateTime StartDate { get; set; }
-        
+
         [Display(Name = "Slutdatum")]
         public DateTime? EndDate { get; set; } // Nullable om utbildningen t.ex inte är avslutad, då sätter man ett "?" framför.
 
-        [Required]
-       
-        public int CvId { get; set; }// Är användbar för queries där du endast behöver ID:t.
-        public CV CV { get; set; } // Navigationsegenskap för relationen till CV
+        public int CvId { get; set; }
+
+        [ForeignKey(nameof(CvId))]
+
+        public virtual CV CV {get;set;}
+
+        //public int CvId { get; set; }// Är användbar för queries där du endast behöver ID:t.
+        //public CV CV { get; set; } // Navigationsegenskap för relationen till CV
                                    //OSÄKER PÅ OM BÅDA BEHÖVS, ELLER ENDAST EN AV DEM??
 
 

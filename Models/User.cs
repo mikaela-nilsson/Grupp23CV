@@ -12,7 +12,7 @@ namespace Grupp23_CV.Models
 
             [Required]
             [Display(Name = "Användarnamn")]
-            public string Username { get; set; } // Användarnamn för inloggning
+            public string UserName { get; set; } // Användarnamn för inloggning
 
             [Required]
             [Display(Name = "E-postadress")]
@@ -30,7 +30,7 @@ namespace Grupp23_CV.Models
             public int CvId { get; set; }// Är användbar för queries där du endast behöver ID:t.
             public CV CV { get; set; } // Navigationsegenskap för relationen till CV
                                        //OSÄKER PÅ OM BÅDA BEHÖVS, ELLER ENDAST EN AV DEM??
-        public List<User_Project> User_Projects { get; set; } = new(); // Koppling till projekt
+        public List<UserProject> User_Projects { get; set; } = new(); // Koppling till projekt
     }
 }
     

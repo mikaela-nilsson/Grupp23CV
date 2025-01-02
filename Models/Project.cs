@@ -20,7 +20,7 @@ namespace Grupp23_CV.Models
         [Display(Name = "Slutdatum")]
         public DateTime? EndDate { get; set; } // Nullable, om projektet inte är avslutat
 
-        public List<User_Project> User_Projects { get; set; } = new (); // Koppling till användare
+        public List<UserProject> User_Projects { get; set; } = new (); // Koppling till användare
 }
 
 

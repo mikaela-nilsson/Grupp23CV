@@ -26,8 +26,9 @@ namespace Grupp23_CV.Models
         public string Description { get; set; }
 
         [Required]
-        public int CvId { get; set; }
-
+        public int CvId { get; set; }// Är användbar för queries där du endast behöver ID:t.
+        public CV CV { get; set; } // Navigationsegenskap för relationen till CV
+                                   //OSÄKER PÅ OM BÅDA BEHÖVS, ELLER ENDAST EN AV DEM??
 
     }
 }
