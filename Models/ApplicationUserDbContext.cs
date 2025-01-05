@@ -48,7 +48,7 @@ namespace Grupp23_CV.Database
                 }
                 );
 
-                modelBuilder.Entity<CV>().HasData(
+            modelBuilder.Entity<Education>().HasData(
                 new Education
                 {
                     Id= 1,
@@ -58,10 +58,11 @@ namespace Grupp23_CV.Database
                     EndDate= new DateTime (2023,1,1),
                     CvId= 2
                 }
-
-
                 );
 
+            //Skapar sammansatta primärnyckeln för UserProject tabellen 
+            modelBuilder.Entity<UserProject>()
+            .HasKey(up => new { up.UserId, up.ProjectId });
 
 
         }

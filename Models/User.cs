@@ -28,9 +28,9 @@ namespace Grupp23_CV.Models
             public bool IsPrivate { get; set; } // Privat/offentlig profil
 
             public int CvId { get; set; }// Är användbar för queries där du endast behöver ID:t.
-            public CV CV { get; set; } // Navigationsegenskap för relationen till CV
+            public virtual CV CV { get; set; } // Navigationsegenskap för relationen till CV
                                        //OSÄKER PÅ OM BÅDA BEHÖVS, ELLER ENDAST EN AV DEM??
-        public List<UserProject> User_Projects { get; set; } = new(); // Koppling till projekt
+        public virtual List<UserProject> User_Projects { get; set; } = new(); // Koppling till projekt
     }
 }
     

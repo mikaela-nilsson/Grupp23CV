@@ -23,9 +23,9 @@ namespace Grupp23_CV.Models
         public string ProfileImagePath { get; set; }
 
         // Relationer till andra entiteter. Ett cv kan innehålla flera skills, educations, exeperiences. Dvs 1:N samband. Vet ej om man kan ha med detta här under??
-        public List<Skill> Skills { get; set; } = new(); // Kompetenser
-        public List<Education> Educations { get; set; } = new(); // Utbildningar
-        public List<Experience> Experiences { get; set; } = new(); // Erfarenheter
+        public virtual List<Skill> Skills { get; set; } = new(); // Kompetenser
+        public virtual List<Education> Educations { get; set; } = new(); // Utbildningar
+        public virtual List<Experience> Experiences { get; set; } = new(); // Erfarenheter
 
 
     }
