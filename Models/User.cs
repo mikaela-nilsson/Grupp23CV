@@ -5,7 +5,7 @@ namespace Grupp23_CV.Models
 
     //User ansvarar för autentisering och grundläggande användaruppgifter som inloggning, registrering och privat/offentlig profilstatus.
     public class User
-    {
+    { 
       
             [Key]
             public int UserId { get; set; } // Unik identifierare för användaren
