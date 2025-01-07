@@ -11,11 +11,11 @@ namespace Grupp23_CV.Models
         [Display(Name = "Kompetens")]
         public string Name { get; set; } // T.ex "java", "c#", "projektledning"
 
-        [Display(Name = "Nivå")]
-        public string Level { get; set; } // Exempel: Grundläggande nivå, "Medelkompetens", "Hög kompetens" 
+        //[Display(Name = "Nivå")]
+        //public string Level { get; set; } // Exempel: Grundläggande nivå, "Medelkompetens", "Hög kompetens" 
 
-        [Display(Name = "Beskrivning")]
-        public string Description { get; set; } // Kort beskrivning av kompetensen
+        //[Display(Name = "Beskrivning")]
+        //public string Description { get; set; } // Kort beskrivning av kompetensen
 
         [Required]
        

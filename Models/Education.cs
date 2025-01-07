@@ -12,15 +12,15 @@ namespace Grupp23_CV.Models
         [Display(Name = "Utbildning")]
         public string Name { get; set; }
 
-        [Required]
-        [Display(Name = "Institution")]
-        public string Institution { get; set; }
+        //[Required]
+        //[Display(Name = "Institution")]
+        //public string Institution { get; set; }
 
-        [Display(Name = "Startdatum")]
-        public DateTime StartDate { get; set; }
+        //[Display(Name = "Startdatum")]
+        //public DateTime StartDate { get; set; }
 
-        [Display(Name = "Slutdatum")]
-        public DateTime? EndDate { get; set; } // Nullable om utbildningen t.ex inte är avslutad, då sätter man ett "?" framför.
+        //[Display(Name = "Slutdatum")]
+        //public DateTime? EndDate { get; set; } // Nullable om utbildningen t.ex inte är avslutad, då sätter man ett "?" framför.
 
         public int CvId { get; set; }
 

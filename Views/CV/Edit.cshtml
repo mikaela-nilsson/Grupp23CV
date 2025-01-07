@@ -1,0 +1,35 @@
+﻿@model Grupp23_CV.Models.CV
+
+@{
+	ViewBag.Title = "Redigera CV";
+}
+
+<h1>Redigera CV</h1>
+
+<form method="post" enctype="multipart/form-data">
+	<div class="form-group">
+		<label for="FullName">Fullständigt namn</label>
+		<input type="text" asp-for="FullName" class="form-control" />
+	</div>
+
+	<div class="form-group">
+		<label for="Adress">Adress</label>
+		<input type="text" asp-for="Adress" class="form-control" />
+	</div>
+
+	<div class="form-group">
+		<label for="PhoneNumber">Telefonnummer</label>
+		<input type="text" asp-for="PhoneNumber" class="form-control" />
+	</div>
+
+	<div class="form-group">
+		<label for="ProfileImage">Profilbild</label>
+		<input type="file" asp-for="ProfileImagePath" class="form-control" />
+		@if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+		{
+			<p>Nuvarande bild: <img src="@Url.Content("~/images/" + Model.ProfileImagePath)" + cv.ProfilImagePath)" alt="Profilbild" style=" width: 100px; height:100px" /></p>
+		}
+	</div>
+
+	<button type="submit" class="btn btn-primary">Spara ändringar</button>
+</form>

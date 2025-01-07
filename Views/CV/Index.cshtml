@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Grupp23_CV.Models.CV>
+
+@{
+	ViewBag.Title = "Ditt CV";
+}
+
+<h1>Ditt CV</h1>
+@if(Model !=null && Model.Any())
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Fullständigt namn</th>
+				<th>Adress</th>
+				<th>Telefonnummer</th>
+				<th>Profilbild</th>
+				<th>Åtgärder</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach(var cv in Model)
+			{
+				<tr>
+					<td>@cv.FullName</td>
+					<td>@cv.Adress</td>
+					<td>@cv.PhoneNumber</td>
+					<td>
+						@if (!string.IsNullOrEmpty(cv.ProfileImagePath))
+						{
+							<img src="@Url.Content("~/images/" + cv.ProfileImagePath)" alt="Profilbild" style=" width: 100px; height:100px" />
+						}
+						else
+						{
+							<span>Ingen bild</span>
+						}
+					</td>
+					<td>
+						<a href="@Url.Action("Edit", "CV", new {id = cv.Id})" class="btn btn-warning">Redigera</a>
+						<a href="@Url.Action("Delete", "CV", new {id = cv.Id})" class="btn btn-danger">Ta bort</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p>Du har inget CV än. <a href="@Url.Action("Create", "CV")">Skapa ett CV</a></p>
+}
