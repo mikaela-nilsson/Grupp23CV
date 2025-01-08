@@ -9,9 +9,9 @@ namespace Grupp23_CV.Models
 
         [Required]
         [Display(Name = "Avsändare")]
-        public string Sender { get; set; }
+        public int SenderId { get; set; }
 
-        public string Receiver { get; set; } // Har ej med Display Name, för om Recevier endast används internt i backend, för att indentifera vilken användare meddelandet skickats till, är det ej nödvändigt med Display Name
+        public int ReceiverId { get; set; }
                     
 
         [Required]
