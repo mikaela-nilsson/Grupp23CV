@@ -3,10 +3,22 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Välkommen till CV!</h1>
+    <p>Hantera dina projekt och ditt CV med vår applikation.</p>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <p>Välkommen @User.Identity.Name!</p>
+        <a asp-controller="CV" asp-action="privateCV" class="btn btn-primary">Se privata användares CV</a>
+        <a asp-controller="CV" asp-action="Index" class="btn btn-secondary">Se användares CV</a>
+    }
+    @*  else
+    {
+        <p>
+            <a asp-controller="Account" asp-action="LogIn" class="btn btn-primary">Logga in</a>
+            eller
+            <a asp-controller="Account" asp-action="Register" class="btn btn-secondary">Registrera dig</a>
+            för att börja använda applikationen.
+        </p>
+    } *@
 </div>
-
-<a asp-controller="CV" asp-action="privateCV">Se privata användares CV</a>
-<a asp-controller="CV" asp-action="Index">Se användares CV</a>
-

@@ -27,48 +27,31 @@ namespace Grupp23_CV.Database
         public DbSet<UserProject> Userprojects { get; set; }
 
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //modelBuilder.Entity<CV>().HasData(
-                //new CV
-                //{
-                    //Id = 1,
-                    //FullName = "Sara Johansson",
-                //    Adress = "Tomtagatan",
-                //    PhoneNumber = "12342",
-                //    ProfileImagePath = "profile.jpg"
-                //},
-                //new CV
-                //{
-                //    Id = 2,
-                //    FullName = "Anna Svensson",
-                //    Adress = "Blåbärsgatan",
-                //    PhoneNumber = "47473",
-                //    ProfileImagePath = "profile.jpg"
 
-                //}
-                //);
-
-            //modelBuilder.Entity<Education>().HasData(
-            //    new Education
-            //    {
-            //        Id= 1,
-            //        Name= "Systemvetenskapligaprogrammet",
-            //        Institution= "Örebro Universitet",
-            //        StartDate= new DateTime (2020,01,01),
-            //        EndDate= new DateTime (2023,1,1),
-            //        CvId= 2
-            //    }
-            //    );
-
-            //Skapar sammansatta primärnyckeln för UserProject tabellen 
+            // Sammansatt primärnyckel för UserProject
             modelBuilder.Entity<UserProject>()
-            .HasKey(up => new { up.UserId, up.ProjectId });
+                .HasKey(up => new { up.UserId, up.ProjectId });
 
+            // Relation mellan User och UserProject
+            modelBuilder.Entity<UserProject>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.User_Projects)
+                .HasForeignKey(up => up.UserId);
 
+            // Relation mellan Project och UserProject
+            modelBuilder.Entity<UserProject>()
+                .HasOne(up => up.Project)
+                .WithMany(p => p.User_Projects)
+                .HasForeignKey(up => up.ProjectId);
         }
+
+
     }
 }
-                
-        
+
+
+

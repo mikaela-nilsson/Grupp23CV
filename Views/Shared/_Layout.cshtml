@@ -25,6 +25,38 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+
+                        <!-- Visa inloggningslänkar eller utloggningslänkar beroende på användarens status -->
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-link nav-link text-dark" style="padding: 0; border: none; background: none;">
+                                        Logga ut
+                                    </button>
+                                </form>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Mina sidor
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" asp-controller="Project" asp-action="Create">Skapa projekt</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Project" asp-action="Index">Mina projekt</a></li>
+                                </ul>
+                            </li>
+                        }
+
+
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="LogIn">Logga in</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Registrera</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

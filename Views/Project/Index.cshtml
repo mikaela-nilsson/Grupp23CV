@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Grupp23_CV.Models.Project>
+
+<h2>Projektlista</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Projektnamn</th>
+            <th>Beskrivning</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var project in Model)
+        {
+            <tr>
+                <td>@project.Title</td>
+                <td>@project.Description</td>
+                <td>
+                    <a class="btn btn-primary" asp-action="Update" asp-route-id="@project.ProjectId">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+

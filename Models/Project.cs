@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Grupp23_CV.Models;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Serialization;
 
 namespace Grupp23_CV.Models
 {
@@ -14,14 +17,9 @@ namespace Grupp23_CV.Models
         [Display(Name = "Beskrivning")]
         public string Description { get; set; }
 
-        [Display(Name = "Startdatum")]
-        public DateTime StartDate { get; set; }
-
-        [Display(Name = "Slutdatum")]
-        public DateTime? EndDate { get; set; } // Nullable, om projektet inte är avslutat
-
-        public virtual List<UserProject> User_Projects { get; set; } = new (); // Koppling till användare
-}
+        //public virtual User User { get; set; }
+        public virtual List<UserProject> User_Projects { get; set; } = new(); // Koppling till användare
+    }
 
 
 }

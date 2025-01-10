@@ -23,6 +23,7 @@ builder.Services.AddAuthentication()
     {
         options.LoginPath = "/Account/LogIn"; // Define the login path
         options.AccessDeniedPath = "/Account/AccessDenied"; // Optional, if you want to customize access denied page
+
     });
 
 var app = builder.Build();
@@ -49,3 +50,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+

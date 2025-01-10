@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Grupp23_CV.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Grupp23_CV.Controllers
 {
@@ -14,7 +15,7 @@ namespace Grupp23_CV.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();

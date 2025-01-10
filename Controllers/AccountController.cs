@@ -4,21 +4,21 @@ using Grupp23_CV.Models;
 
 namespace Grupp23_CV.Controllers
 {
-	public class AccountController : Controller
-	{
-		private UserManager<User> userManager;
-		private SignInManager<User> signInManager;
-		public AccountController(UserManager<User> userMngr,
-		SignInManager<User> signInMngr)
-		{
-			this.userManager = userMngr;
-			this.signInManager = signInMngr;
-		}
-		[HttpGet]
-		public IActionResult Register()
-		{
-			return View();
-		}
+    public class AccountController : Controller
+    {
+        private UserManager<User> userManager;
+        private SignInManager<User> signInManager;
+        public AccountController(UserManager<User> userMngr,
+        SignInManager<User> signInMngr)
+        {
+            this.userManager = userMngr;
+            this.signInManager = signInMngr;
+        }
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
@@ -83,5 +83,6 @@ namespace Grupp23_CV.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
     }
 }
