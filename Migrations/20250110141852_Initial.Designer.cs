@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Grupp23_CV.Migrations
 {
     [DbContext(typeof(ApplicationUserDbContext))]
-    [Migration("20250108102026_initial")]
-    partial class initial
+    [Migration("20250110141852_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,7 +57,9 @@ namespace Grupp23_CV.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("CVs");
                 });
@@ -146,12 +148,6 @@ namespace Grupp23_CV.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -406,8 +402,8 @@ namespace Grupp23_CV.Migrations
             modelBuilder.Entity("Grupp23_CV.Models.CV", b =>
                 {
                     b.HasOne("Grupp23_CV.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithOne("CV")
+                        .HasForeignKey("Grupp23_CV.Models.CV", "UserId");
 
                     b.Navigation("User");
                 });
@@ -531,6 +527,9 @@ namespace Grupp23_CV.Migrations
 
             modelBuilder.Entity("Grupp23_CV.Models.User", b =>
                 {
+                    b.Navigation("CV")
+                        .IsRequired();
+
                     b.Navigation("User_Projects");
                 });
 #pragma warning restore 612, 618
