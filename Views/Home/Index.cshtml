@@ -8,10 +8,9 @@
     @if (User.Identity.IsAuthenticated)
     {
         <p>Välkommen @User.Identity.Name!</p>
-
     }
     <p>Hantera dina projekt och ditt CV med vår applikation.</p>
     <a asp-controller="CV" asp-action="privateCV" class="btn btn-primary">Se privata användares CV</a>
     <a asp-controller="CV" asp-action="Index" class="btn btn-secondary">Se användares CV</a>
-    <a asp-controller="Project" asp-action="Index" class="btn btn-secondary">Se alla projekt</a>
-    </div>
+    <a asp-controller="Project" asp-action="AllProjects" class="btn btn-secondary">Se alla projekt</a>
+</div>

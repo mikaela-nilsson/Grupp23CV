@@ -19,16 +19,34 @@ namespace Grupp23_CV.Controllers
 
         public IActionResult Index()
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            List<Project> projectLista;
 
-            // Hämta projekt kopplade till den inloggade användaren
-            var projectLista = _context.Userprojects
-                .Where(up => up.UserId == userId)
-                .Select(up => up.Project)
-                .ToList();
+            // Kontrollera om användaren är inloggad
+            if (User.Identity.IsAuthenticated)
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("Användarens ID hittades inte.");
+                }
+
+                var userId = int.Parse(userIdClaim.Value);
+
+                // Hämta projekt kopplade till den inloggade användaren
+                projectLista = _context.Userprojects
+                    .Where(up => up.UserId == userId)
+                    .Select(up => up.Project)
+                    .ToList();
+            }
+            else
+            {
+                // Hämta alla projekt som endast visar titel och beskrivning för utloggade användare
+                projectLista = _context.Projects.ToList();
+            }
 
             return View(projectLista);
         }
+
 
 
         //Skapar vyn
@@ -119,17 +137,46 @@ namespace Grupp23_CV.Controllers
             return View(project);
         }
 
-
         public IActionResult AllProjects()
         {
-            var projects = _context.Projects
-                .Include(p => p.User_Projects) // Ladda relaterade data
-                .ThenInclude(up => up.User)   // Ladda användardata
+            // Hämta alla projekt
+            var allProjects = _context.Projects
+                .Include(p => p.UserProjects) // Ladda användarrelationer
+                .ThenInclude(up => up.User) // Ladda användarobjekt
                 .ToList();
 
-            ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
-            return View("AllProjects", projects); // Peka på den nya vyn
+            ViewBag.IsAuthenticated = User.Identity.IsAuthenticated; // Kolla om användaren är inloggad
+            return View(allProjects); // Skicka alla projekt till vyn
         }
+        [HttpPost]
+        public IActionResult JoinProject(int id)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("Du måste vara inloggad för att kunna gå med i ett projekt.");
+            }
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            // Kontrollera om användaren redan är med i projektet
+            var existingEntry = _context.Userprojects
+                .FirstOrDefault(up => up.UserId == userId && up.ProjectId == id);
+
+            if (existingEntry == null)
+            {
+                var userProject = new UserProject
+                {
+                    UserId = userId,
+                    ProjectId = id
+                };
+                _context.Userprojects.Add(userProject);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("AllProjects");
+        }
+
+
 
     }
 }

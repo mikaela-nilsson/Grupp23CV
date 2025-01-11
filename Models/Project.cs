@@ -19,7 +19,7 @@ namespace Grupp23_CV.Models
         public string Description { get; set; }
 
         //public virtual User User { get; set; }
-        public virtual List<UserProject> User_Projects { get; set; } = new(); // Koppling till användare
+        public virtual List<UserProject> UserProjects { get; set; } = new(); // Koppling till användare
     }
 
 

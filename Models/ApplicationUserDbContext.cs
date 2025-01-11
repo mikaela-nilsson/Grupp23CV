@@ -45,7 +45,7 @@ namespace Grupp23_CV.Database
             // Relation mellan Project och UserProject
             modelBuilder.Entity<UserProject>()
                 .HasOne(up => up.Project)
-                .WithMany(p => p.User_Projects)
+                .WithMany(p => p.UserProjects)
                 .HasForeignKey(up => up.ProjectId);
         }
 
