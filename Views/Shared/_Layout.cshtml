@@ -17,6 +17,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
@@ -31,7 +32,7 @@
                         {
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
-                                    <button type="submit" class="btn btn-link nav-link text-dark" style="padding: 0; border: none; background: none;">
+                                    <button type="submit" class="btn btn-link nav-link text-dark" style="padding: 0; border: none; background: none; margin-top: 8px;">
                                         Logga ut
                                     </button>
                                 </form>
@@ -43,6 +44,7 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" asp-controller="Project" asp-action="Create">Skapa projekt</a></li>
                                     <li><a class="dropdown-item" asp-controller="Project" asp-action="Index">Mina projekt</a></li>
+
                                 </ul>
                             </li>
                         }

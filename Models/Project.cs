@@ -10,10 +10,11 @@ namespace Grupp23_CV.Models
         [Key]
         public int ProjectId { get; set; } // Unik identifierare för projektet
 
-        [Required]
+        [Required(ErrorMessage = "Vänligen ange namn för projektnamn")]
         [Display(Name = "Projektnamn")]
         public string Title { get; set; }
 
+        [Required(ErrorMessage = "Vänligen ange en beskrivning av projektet")]
         [Display(Name = "Beskrivning")]
         public string Description { get; set; }
 

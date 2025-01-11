@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Grupp23_CV.Models.Project>
+
+@{
+    ViewBag.Title = "Alla Projekt";
+    bool isAuthenticated = ViewBag.IsAuthenticated as bool? == true;
+}
+
+<h1>Alla Projekt</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Titel</th>
+            <th>Beskrivning</th>
+            @if (isAuthenticated)
+            {
+                <th>Deltagare</th>
+                <th>Åtgärder</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var project in Model)
+        {
+            <tr>
+                <td>@project.Title</td>
+                <td>@project.Description</td>
+                @if (isAuthenticated)
+                {
+                    <td>
+                        @if (project.User_Projects != null && project.User_Projects.Any())
+                        {
+                            <ul>
+                                @foreach (var userProject in project.User_Projects)
+                                {
+                                    <li>@userProject.User.UserName</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>Inga deltagare</span>
+                        }
+                    </td>
+                    <td>
+                        <form method="post" asp-action="JoinProject" asp-route-id="@project.ProjectId">
+                            <button type="submit" class="btn btn-primary">Ingå i projekt</button>
+                        </form>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!isAuthenticated)
+{
+    <p>Logga in för att se deltagare och kunna gå med i projekt.</p>
+}

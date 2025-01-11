@@ -118,8 +118,19 @@ namespace Grupp23_CV.Controllers
 
             return View(project);
         }
+
+
+        public IActionResult AllProjects()
+        {
+            var projects = _context.Projects
+                .Include(p => p.User_Projects) // Ladda relaterade data
+                .ThenInclude(up => up.User)   // Ladda användardata
+                .ToList();
+
+            ViewBag.IsAuthenticated = User.Identity.IsAuthenticated;
+            return View("AllProjects", projects); // Peka på den nya vyn
+        }
+
     }
-
 }
-
 
