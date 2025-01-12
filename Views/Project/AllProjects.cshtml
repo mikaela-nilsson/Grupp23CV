@@ -33,6 +33,7 @@
                     <td>
                         <form asp-action="JoinProject" method="post">
                             <input type="hidden" name="id" value="@project.ProjectId" />
+                            <input type="hidden" name="redirectTo" value="AllProjects" />
                             <button type="submit" class="btn btn-success">Gå med i projekt</button>
                         </form>
                     </td>
@@ -41,3 +42,4 @@
         }
     </tbody>
 </table>
+

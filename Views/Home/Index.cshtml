@@ -1,16 +1,53 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+	ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Välkommen till CV!</h1>
+	<h1 class="display-4">Välkommen till CV!</h1>
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        <p>Välkommen @User.Identity.Name!</p>
-    }
-    <p>Hantera dina projekt och ditt CV med vår applikation.</p>
-    <a asp-controller="CV" asp-action="privateCV" class="btn btn-primary">Se privata användares CV</a>
-    <a asp-controller="CV" asp-action="Index" class="btn btn-secondary">Se användares CV</a>
-    <a asp-controller="Project" asp-action="AllProjects" class="btn btn-secondary">Se alla projekt</a>
+	@if (User.Identity.IsAuthenticated)
+	{
+		<p>Välkommen @User.Identity.Name!</p>
+	}
+	<p>Hantera dina projekt och ditt CV med vår applikation.</p>
+	<a asp-controller="CV" asp-action="privateCV" class="btn btn-primary">Se privata användares CV</a>
+	<a asp-controller="CV" asp-action="Index" class="btn btn-secondary">Se användares CV</a>
+	<a asp-controller="Project" asp-action="AllProjects" class="btn btn-secondary">Se alla projekt</a>
 </div>
+
+<h2>Senaste upplagda projektet</h2>
+@if (Model != null)
+{
+	<div class="card">
+		<div class="card-body">
+			<h4 class="card-title">@Model.Title</h4>
+			<p class="card-text">@Model.Description</p>
+
+			@if (User.Identity.IsAuthenticated)
+			{
+				<form asp-controller="Project" asp-action="JoinProject" method="post">
+					<input type="hidden" name="id" value="@Model.ProjectId" />
+					<button type="submit" class="btn btn-success">Koppla projekt till din profil</button>
+				</form>
+
+				<!-- Visa meddelande om det gäller detta projekt -->
+				@if (TempData["JoinMessage"] != null &&
+						TempData["JoinedProjectId"] != null &&
+						(int)TempData["JoinedProjectId"] == Model.ProjectId)
+				{
+					<span class="text-success">@TempData["JoinMessage"]</span>
+				}
+			}
+			else
+			{
+				<a asp-controller="Account" asp-action="Login" class="btn btn-primary">Logga in för att koppla dig till detta projekt</a>
+			}
+		</div>
+	</div>
+}
+else
+{
+	<p>Det finns inga projekt att visa just nu.</p>
+}
+
+

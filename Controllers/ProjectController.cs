@@ -146,23 +146,25 @@ namespace Grupp23_CV.Controllers
                 .ToList();
 
             ViewBag.IsAuthenticated = User.Identity.IsAuthenticated; // Kolla om användaren är inloggad
-            return View(allProjects); // Skicka alla projekt till vyn
+            return View(allProjects);
         }
+
+
         [HttpPost]
-        public IActionResult JoinProject(int id)
+        public IActionResult JoinProject(int id, string redirectTo = "AllProjects")
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return Unauthorized("Du måste vara inloggad för att kunna gå med i ett projekt.");
+                return Unauthorized("Du måste vara inloggad för att koppla dig till ett projekt.");
             }
 
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            // Kontrollera om användaren redan är med i projektet
-            var existingEntry = _context.Userprojects
+            // Kontrollera om användaren redan är kopplad till projektet
+            var existingConnection = _context.Userprojects
                 .FirstOrDefault(up => up.UserId == userId && up.ProjectId == id);
 
-            if (existingEntry == null)
+            if (existingConnection == null)
             {
                 var userProject = new UserProject
                 {
@@ -171,13 +173,20 @@ namespace Grupp23_CV.Controllers
                 };
                 _context.Userprojects.Add(userProject);
                 _context.SaveChanges();
+
+                TempData["JoinMessage"] = "Nu har du kopplat projektet till din profil!";
+                TempData["JoinedProjectId"] = id; // Lägg till projekt-ID
+            }
+            else
+            {
+                TempData["JoinMessage"] = "Du är redan kopplad till detta projekt.";
+                TempData["JoinedProjectId"] = id; // Lägg till projekt-ID
             }
 
-            return RedirectToAction("AllProjects");
+            return RedirectToAction("Index", "Home");
         }
 
 
 
     }
 }
-
