@@ -1,0 +1,18 @@
+﻿@model Grupp23_CV.Models.Education
+
+<h1>Lägg till utbildning</h1>
+
+<form asp-controller="CV" asp-action="CreateEducation" method="post">
+	<div asp-validation-summary="All" class="text-danger"></div>
+
+	<div class="form-group">
+		<label asp-for="Name">Utbildninges namn</label>
+		<input asp-for="Name" class="form-control" />
+		<span asp-validation-for="Name" class="text-danger"></span>
+	</div>
+
+	<input type="hidden" name="CvId" value="@Model.CvId" />
+
+	<button type="submit" class="btn btn-primary">Lägg till utbildning</button>
+
+</form>

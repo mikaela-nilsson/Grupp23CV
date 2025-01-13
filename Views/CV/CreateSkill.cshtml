@@ -1,0 +1,19 @@
+﻿@model Grupp23_CV.Models.Skill
+
+<h1>Lägg till kompetens</h1>
+
+<form asp-controller="CV" asp-action="CreateSkill" method="post">
+	<div asp-validation-summary="All" class="text-danger"></div>
+
+	<div class="form-group">
+		<label asp-for="Name">Kompetens</label>
+		<input asp-for="Name" class="form-control" />
+		<span asp-validation-for="Name" class="text-danger"></span>
+	</div>
+
+	<input type="hidden" asp-for="CvId" />
+
+	<button type="submit" class="btn btn-primary">Lägg till kompetens</button>
+
+</form>
+

@@ -46,17 +46,15 @@ namespace Grupp23_CV.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfileImagePath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("CVs");
                 });
@@ -73,7 +71,6 @@ namespace Grupp23_CV.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -95,7 +92,6 @@ namespace Grupp23_CV.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("JobTitle")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -167,7 +163,6 @@ namespace Grupp23_CV.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -400,7 +395,9 @@ namespace Grupp23_CV.Migrations
                 {
                     b.HasOne("Grupp23_CV.Models.User", "User")
                         .WithOne("CV")
-                        .HasForeignKey("Grupp23_CV.Models.CV", "UserId");
+                        .HasForeignKey("Grupp23_CV.Models.CV", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -441,7 +438,7 @@ namespace Grupp23_CV.Migrations
             modelBuilder.Entity("Grupp23_CV.Models.UserProject", b =>
                 {
                     b.HasOne("Grupp23_CV.Models.Project", "Project")
-                        .WithMany("User_Projects")
+                        .WithMany("UserProjects")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -519,7 +516,7 @@ namespace Grupp23_CV.Migrations
 
             modelBuilder.Entity("Grupp23_CV.Models.Project", b =>
                 {
-                    b.Navigation("User_Projects");
+                    b.Navigation("UserProjects");
                 });
 
             modelBuilder.Entity("Grupp23_CV.Models.User", b =>

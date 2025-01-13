@@ -1,0 +1,20 @@
+﻿@model Grupp23_CV.Models.Experience
+
+<h1>Lägg till erfarenhet</h1>
+
+<form asp-controller="CV" asp-action="CreateExperience" method="post">
+	<div asp-validation-summary="All" class="text-danger"></div>
+
+	<div class="form-group">
+		<label asp-for="JobTitle">Erfarenhet</label>
+		<input asp-for="JobTitle" class="form-control" />
+		<span asp-validation-for="JobTitle" class="text-danger"></span>
+	</div>
+
+	<input type="hidden" asp-for="CvId" />
+
+	<button type="submit" class="btn btn-primary">Lägg till erfarenhet</button>
+
+</form>
+
+

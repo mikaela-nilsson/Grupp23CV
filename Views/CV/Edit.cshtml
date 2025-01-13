@@ -7,29 +7,70 @@
 <h1>Redigera CV</h1>
 
 <form method="post" enctype="multipart/form-data">
-	<div class="form-group">
-		<label for="FullName">Fullständigt namn</label>
-		<input type="text" asp-for="FullName" class="form-control" />
-	</div>
+    <input type="hidden" name="Id" value="@Model.Id" />
 
-	<div class="form-group">
-		<label for="Adress">Adress</label>
-		<input type="text" asp-for="Adress" class="form-control" />
-	</div>
+    <div class="form-group">
+        <label for="FullName">Fullständigt namn</label>
+        <input type="text" asp-for="FullName" class="form-control" />
+    </div>
 
-	<div class="form-group">
-		<label for="PhoneNumber">Telefonnummer</label>
-		<input type="text" asp-for="PhoneNumber" class="form-control" />
-	</div>
+    <div class="form-group">
+        <label for="Adress">Adress</label>
+        <input type="text" asp-for="Adress" class="form-control" />
+    </div>
 
-	<div class="form-group">
-		<label for="ProfileImage">Profilbild</label>
-		<input type="file" asp-for="ProfileImagePath" class="form-control" />
-		@if (!string.IsNullOrEmpty(Model.ProfileImagePath))
-		{
-			<p>Nuvarande bild: <img src="@Url.Content("~/images/" + Model.ProfileImagePath)" + cv.ProfilImagePath)" alt="Profilbild" style=" width: 100px; height:100px" /></p>
-		}
-	</div>
+    <div class="form-group">
+        <label for="PhoneNumber">Telefonnummer</label>
+        <input type="text" asp-for="PhoneNumber" class="form-control" />
+    </div>
 
-	<button type="submit" class="btn btn-primary">Spara ändringar</button>
+    <div class="form-group">
+        <label for="ProfileImage">Profilbild</label>
+        <input type="file" name="profileImage" class="form-control" />
+        @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+        {
+            <img src="~/images/@Model.ProfileImagePath" alt="Profilbild" style="width: 100px; height: 100px;" />
+        }
+    </div>
+
+    <div class="form-group">
+        <label>Utbildning</label>
+        <ul>
+            @for (int i = 0; i < Model.Educations.Count; i++)
+            {
+                <li>
+                    <input type="hidden" name="Educations[@i].Id" value="@Model.Educations[i].Id" />
+                    <input type="text" name="Educations[@i].Name" value="@Model.Educations[i].Name" class="form-control" />
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="form-group">
+        <label>Erfarenhet</label>
+        <ul>
+            @for (int i = 0; i < Model.Experiences.Count; i++)
+            {
+                <li>
+                    <input type="hidden" name="Experiences[@i].Id" value="@Model.Experiences[i].Id" />
+                    <input type="text" name="Experiences[@i].JobTitle" value="@Model.Experiences[i].JobTitle" class="form-control" />
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="form-group">
+        <label>Kompetens</label>
+        <ul>
+            @for (int i = 0; i < Model.Skills.Count; i++)
+            {
+                <li>
+                    <input type="hidden" name="Skills[@i].Id" value="@Model.Skills[i].Id" />
+                    <input type="text" name="Skills[@i].Name" value="@Model.Skills[i].Name" class="form-control" />
+                </li>
+            }
+        </ul>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Spara ändringar</button>
 </form>

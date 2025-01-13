@@ -4,18 +4,81 @@
 	ViewBag.Title = "Radera CV";
 }
 
-<h1>Är du säker på att du vill radera ditt CV?</h1>
+<div class="container">
+    <h1>Är du säker på att du vill radera ditt CV?</h1>
 
-<div>
-	<strong>@Model.FullName</strong>
-	<p>@Model.Adress</p>
-	<p>@Model.PhoneNumber</p>
-	@if (!string.IsNullOrEmpty(Model.ProfileImagePath))
-	{
-		<img src="@Url.Content("~/images/" + Model.ProfileImagePath)" alt="Profilbild" style=" width: 100px; height:100px" />
-	}
-	<form method="post">
-		<button type="submit" class="btn btn-danger">Ja, radera</button>
-		<a href="@Url.Action("Index", "CV")" class="btn btn-secondary">Avbryt</a>
-	</form>
+    <div class="cv-info">
+        <strong>@Model.FullName</strong>
+        <p>@Model.Adress</p>
+        <p>@Model.PhoneNumber</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+    {
+        <div class="profile-image-container">
+            <img src="@Url.Content("~/images/" + Model.ProfileImagePath.TrimStart('/'))" alt="Profilbild" class="profile-image" />
+        </div>
+    }
+    else
+    {
+        <p>Ingen profilbild tillagd.</p>
+    }
+
+    <div class="section">
+        <h3>Utbildningar:</h3>
+        @if (Model.Educations != null && Model.Educations.Any())
+        {
+            <ul>
+                @foreach (var education in Model.Educations)
+                {
+                    <li>@education.Name</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Inga utbildningar tillagda.</p>
+        }
+    </div>
+
+    <div class="section">
+        <h3>Erfarenheter:</h3>
+        @if (Model.Experiences != null && Model.Experiences.Any())
+        {
+            <ul>
+                @foreach (var experience in Model.Experiences)
+                {
+                    <li>@experience.JobTitle</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Inga erfarenheter tillagda.</p>
+        }
+    </div>
+
+    <div class="section">
+        <h3>Kompetens:</h3>
+        @if (Model.Skills != null && Model.Skills.Any())
+        {
+            <ul>
+                @foreach (var skill in Model.Skills)
+                {
+                    <li>@skill.Name</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Inga kompetenser tillagda.</p>
+        }
+    </div>
+
+    <div class="form-buttons">
+        <form method="post">
+            <button type="submit" class="btn btn-danger">Ja, radera</button>
+            <a href="@Url.Action("Index", "CV")" class="btn btn-secondary">Avbryt</a>
+        </form>
+    </div>
 </div>

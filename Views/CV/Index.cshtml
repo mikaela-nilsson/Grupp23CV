@@ -5,45 +5,114 @@
 }
 
 <h1>Ditt CV</h1>
-@if(Model !=null && Model.Any())
+
+@if (Model != null && Model.Any())
 {
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Fullständigt namn</th>
-				<th>Adress</th>
-				<th>Telefonnummer</th>
-				<th>Profilbild</th>
-				<th>Åtgärder</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach(var cv in Model)
-			{
-				<tr>
-					<td>@cv.FullName</td>
-					<td>@cv.Adress</td>
-					<td>@cv.PhoneNumber</td>
-					<td>
-						@if (!string.IsNullOrEmpty(cv.ProfileImagePath))
-						{
-							<img src="@Url.Content("~/images/" + cv.ProfileImagePath)" alt="Profilbild" style=" width: 100px; height:100px" />
-						}
-						else
-						{
-							<span>Ingen bild</span>
-						}
-					</td>
-					<td>
-						<a href="@Url.Action("Edit", "CV", new {id = cv.Id})" class="btn btn-warning">Redigera</a>
-						<a href="@Url.Action("Delete", "CV", new {id = cv.Id})" class="btn btn-danger">Ta bort</a>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
+    <div class="cv-list">
+        @foreach (var cv in Model)
+        {
+            <div class="cv-card">
+                <div class="cv-header">
+                    <h2>@cv.FullName</h2>
+                    <p><strong>Adress:</strong> @cv.Adress</p>
+                    <p><strong>Telefonnummer:</strong> @cv.PhoneNumber</p>
+                </div>
+                <div class="cv-body">
+                    <div class="profile-image">
+                        @if (!string.IsNullOrEmpty(cv.ProfileImagePath))
+                        {
+                            <img src="@cv.ProfileImagePath" alt="Profilbild" />
+                        }
+                        else
+                        {
+                            <p>Ingen bild</p>
+                        }
+                    </div>
+                    <div class="cv-sections">
+                        <div class="cv-education">
+                            <h3>Utbildning</h3>
+                            <ul>
+                                @foreach (var edu in cv.Educations)
+                                {
+                                    <li>@edu.Name</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="cv-experience">
+                            <h3>Erfarenhet</h3>
+                            <ul>
+                                @foreach (var exp in cv.Experiences)
+                                {
+                                    <li>@exp.JobTitle</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="cv-skills">
+                            <h3>Kompetens</h3>
+                            <ul>
+                                @foreach (var skill in cv.Skills)
+                                {
+                                    <li>@skill.Name</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="cv-actions">
+                    <a href="@Url.Action("Edit", "CV", new { id = cv.Id })" class="btn btn-warning">Redigera</a>
+                    <a href="@Url.Action("Delete", "CV", new { id = cv.Id })" class="btn btn-danger">Ta bort</a>
+                </div>
+            </div>
+        }
+    </div>
 }
 else
 {
-	<p>Du har inget CV än. <a href="@Url.Action("Create", "CV")">Skapa ett CV</a></p>
+    <p>Du har inget CV än. <a href="@Url.Action("Create", "CV")" class="btn btn-primary">Skapa ett CV</a></p>
 }
+
+<style>
+    .cv-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .cv-card {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .cv-header h2 {
+        margin: 0 0 10px;
+    }
+
+    .cv-header p {
+        margin: 5px 0;
+    }
+
+    .profile-image img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .cv-sections h3 {
+        margin-top: 20px;
+        font-size: 1.2em;
+    }
+
+    .cv-actions {
+        margin-top: 20px;
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+</style>

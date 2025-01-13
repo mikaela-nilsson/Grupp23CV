@@ -1,0 +1,57 @@
+﻿@model Grupp23_CV.Models.CV
+
+<h1>Översikt för ditt CV</h1>
+
+<div>
+	<h2>Personlig information</h2>
+	<p><strong>Namn:</strong>@Model.FullName</p>
+	<p><strong>Adress:</strong>@Model.Adress</p>
+	<p><strong>Telefonnummer:</strong>@Model.PhoneNumber</p>
+</div>
+
+<div>
+	<h2>Profilbild</h2>
+	@if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+	{
+		<img src="@Model.ProfileImagePath" alt="Profilbild" class="img-fluid" />
+	}
+	else
+	{
+		<p>Ingen profilbild uppladdad.</p>
+	}
+</div>
+
+<div>
+	<h2>Utbildning</h2>
+	<ul>
+		@foreach (var education in Model.Educations)
+		{
+			<li>@education.Name</li>
+		}
+	</ul>
+</div>
+
+<div>
+	<h2>Arbetslivserfarenhet</h2>
+	<ul>
+		@foreach (var experience in Model.Experiences)
+		{
+			<li>@experience.JobTitle</li>
+		}
+	</ul>
+</div>
+
+<div>
+	<h2>Kompetens</h2>
+	<ul>
+		@foreach (var skill in Model.Skills)
+		{
+			<li>@skill.Name</li>
+		}
+	</ul>
+</div>
+
+<form asp-action="Complete" method="post">
+	<input type="hidden" asp-for="Id" />
+	<button type="submit" class="btn btn-success">Slutför</button>
+</form>
