@@ -1,0 +1,32 @@
+﻿@model UserSearchViewModel
+
+<h2 class="mb-4">Sök efter användare</h2>
+
+
+<form asp-action="Search" asp-controller="User" method="post" class="form-group row mb-3">
+    <div class="col-auto">
+        <input asp-for="SearchQuery" class="form-control" placeholder="Skriv ditt sökord här" />
+        <span asp-validation-for="SearchQuery" class="text-danger"></span>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Sök</button>
+    </div>
+</form>
+
+
+@if (Model.SearchPerformed && !Model.Results.Any())
+{
+    <div class="alert alert-warning mt-3">Inga CV:n matchar det angivna namnet.</div>
+}
+else if (Model.Results.Any())
+{
+    <ul class="list-group mt-3">
+        @foreach (var cv in Model.Results)
+        {
+            <li class="list-group-item">
+                <h3>@cv.FullName</h3>
+                <a asp-action="Index" asp-controller="CV" asp-route-userId="@cv.UserId" class="btn btn-secondary">Visa CV</a>
+            </li>
+        }
+    </ul>
+}

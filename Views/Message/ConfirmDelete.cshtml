@@ -1,0 +1,11 @@
+﻿@model List<int>
+
+<h2>Bekräfta radering</h2>
+
+<p>Är du säker på att du vill radera de valda meddelandena?</p>
+
+<form method="post" asp-action="DeleteMessages" asp-controller="Message">
+    <input type="hidden" name="SelectedMessages" value="@string.Join(",", Model)" /> <!--Skickar med valda messageId separarerade med kommatecken-->
+    <button type="submit" class="btn btn-danger">Bekräfta radering</button>
+    <a href="@Url.Action("CancelDelete", "Message")" class="btn btn-secondary">Avbryt</a>
+</form>

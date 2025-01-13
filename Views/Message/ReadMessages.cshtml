@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Message>
+
+<h2>Lästa meddelanden</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success my-3">
+        @TempData["SuccessMessage"]
+    </div>
+    TempData["SuccessMessage"] = null;
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-warning my-3">
+        @TempData["ErrorMessage"]
+    </div>
+    TempData["ErrorMessage"] = null;
+}
+
+@if (!Model.Any())
+{
+    <div class="text-muted my-5">
+        <p>Du har inga lästa meddelanden.</p>
+    </div>
+}
+else
+{
+    <form method="post" asp-action="ConfirmDelete" asp-controller="Message">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Avsändare</th>
+                    <th>Meddelande</th>
+                    <th>Datum</th>
+                    <th class="text-start align-middle">Radera</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var message in Model)
+                {
+                    <tr>
+                        <td>@message.SenderName</td>
+                        <td>@message.Content</td>
+                        <td>@message.SentDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            <input type="checkbox" name="SelectedMessages" value="@message.Id" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-danger">Ta bort valda meddelanden</button>
+        </div>
+    </form>
+}
+<div class="mb-3">
+    <a asp-action="ReceivedMessages" asp-controller="Message" class="btn btn-secondary">Visa olästa meddelanden</a>
+</div>
+

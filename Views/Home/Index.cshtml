@@ -1,39 +1,71 @@
-﻿@{
-	ViewData["Title"] = "Home Page";
+﻿@model HomeViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-	<h1 class="display-4">Välkommen till CV!</h1>
+<div class="text-center mb-5">
 
-	@if (User.Identity.IsAuthenticated)
-	{
-		<p>Välkommen @User.Identity.Name!</p>
-	}
-	<p>Hantera dina projekt och ditt CV med vår applikation.</p>
-	<a asp-controller="CV" asp-action="privateCV" class="btn btn-primary">Se privata användares CV</a>
-	<a asp-controller="CV" asp-action="Index" class="btn btn-secondary">Se användares CV</a>
-	<a asp-controller="Project" asp-action="AllProjects" class="btn btn-secondary">Se alla projekt</a>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <h1 class="display-4 mt-5">Välkommen, @User.Identity.Name!</h1>
+    }
+    else
+    {
+        <h1 class="display-4">Välkommen, gäst!</h1>
+    }
+
+    <p class="lead">Hantera dina projekt och ditt CV med vår applikation.</p>
+
+    <div class="my-3 d-flex justify-content-center">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="CV" asp-action="Index" asp-route-userId="@Model.CurrentUserId" class="btn btn-secondary me-3">Visa/Ändra Mitt CV</a>
+        }
+            <a asp-action="Search" asp-controller="User" class="btn btn-outline-primary me-3">Sök efter en användare</a>
+
+            <a asp-controller="Project" asp-action="AllProjects" class="btn btn-secondary">Se alla projekt</a>
+    </div>
+
+    <h2 class="mt-5">CV:n</h2>
+</div>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var cv in Model.CVs)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                @if (!string.IsNullOrEmpty(cv.ProfileImagePath))
+                {
+                    <img src="@cv.ProfileImagePath" class="card-img-top img-fluid" alt="Profilbild" style="max-height: 200px; object-fit: cover;" />
+                }
+                <div class="card-body flex-fill">
+                    <h5 class="card-title">@cv.FullName</h5>
+                    <a asp-controller="CV" asp-action="Index" asp-route-userId="@cv.UserId" class="btn btn-secondary">Visa CV</a>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
-<h2>Senaste upplagda projektet</h2>
-@if (Model != null)
+<h2 class="mt-5">Senaste upplagda projektet</h2>
+@if (Model.LatestProject != null)
 {
 	<div class="card">
 		<div class="card-body">
-			<h4 class="card-title">@Model.Title</h4>
-			<p class="card-text">@Model.Description</p>
+			<h4 class="card-title">@Model.LatestProject.Title</h4>
+			<p class="card-text">@Model.LatestProject.Description</p>
 
 			@if (User.Identity.IsAuthenticated)
 			{
 				<form asp-controller="Project" asp-action="JoinProject" method="post">
-					<input type="hidden" name="id" value="@Model.ProjectId" />
+					<input type="hidden" name="id" value="@Model.LatestProject.ProjectId" />
 					<button type="submit" class="btn btn-success">Koppla projekt till din profil</button>
 				</form>
 
 				<!-- Visa meddelande om det gäller detta projekt -->
 				@if (TempData["JoinMessage"] != null &&
 						TempData["JoinedProjectId"] != null &&
-						(int)TempData["JoinedProjectId"] == Model.ProjectId)
+						(int)TempData["JoinedProjectId"] == Model.LatestProject.ProjectId)
 				{
 					<span class="text-success">@TempData["JoinMessage"]</span>
 				}

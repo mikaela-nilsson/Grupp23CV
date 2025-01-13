@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Grupp23_CV.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Grupp23_CV.Controllers
 {
@@ -82,6 +83,53 @@ namespace Grupp23_CV.Controllers
         {
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var model = new ChangePasswordViewModel();
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await userManager.GetUserAsync(User);
+
+            var isOldPasswordValid = await userManager.CheckPasswordAsync(user, model.NuvarandeLosenord);
+            if (!isOldPasswordValid)
+            {
+                ModelState.AddModelError(nameof(model.NuvarandeLosenord), "Det nuvarande lösenordet är felaktigt.");
+                return View(model);
+            }
+
+            var result = await userManager.ChangePasswordAsync(user, model.NuvarandeLosenord, model.NyttLosenord);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("PasswordChanged"); //Skicka användaren till en bekräftelsesida
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult PasswordChanged()
+        {
+            return View();
         }
 
     }

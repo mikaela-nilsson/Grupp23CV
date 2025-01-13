@@ -16,6 +16,7 @@ namespace Grupp23_CV.Models
 
         [Required(ErrorMessage = "Fullständiga namn är obligatoriskt.")]
         [Display(Name = "Fullständiga namn")]
+        [RegularExpression(@"^[a-zA-ZåäöÅÄÖ\s]+$", ErrorMessage = "Namn får endast innehålla bokstäver och mellanslag.")]
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "Adress är obligatoriskt.")]
@@ -23,6 +24,7 @@ namespace Grupp23_CV.Models
         public string Adress { get; set; }
 
         [Required(ErrorMessage = "Telefonnummer är obligatoriskt.")]
+        [Phone(ErrorMessage = "Ogiltigt telefonnummer.")]
         [Display(Name = "Telefonnummer")]
         public string PhoneNumber { get; set; }
 

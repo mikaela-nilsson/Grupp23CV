@@ -1,67 +1,69 @@
-﻿@model IEnumerable<Grupp23_CV.Models.CV>
+﻿@model CV
 
-@{
-	ViewBag.Title = "Ditt CV";
-}
+<h1>@((Model.UserId == (ViewBag.CurrentUserId as int?) ? "Ditt CV" : "Användarens CV"))</h1>
 
-<h1>Ditt CV</h1>
-
-@if (Model != null && Model.Any())
+@if (Model != null)
 {
-    <div class="cv-list">
-        @foreach (var cv in Model)
+    <div class="cv-card">
+        <div class="cv-header">
+            <h2>@Model.FullName</h2>
+            <p><strong>Adress:</strong> @Model.Adress</p>
+            <p><strong>Telefonnummer:</strong> @Model.PhoneNumber</p>
+        </div>
+        <div class="cv-body">
+            <div class="profile-image">
+                @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                {
+                    <img src="@Model.ProfileImagePath" alt="Profilbild" />
+                }
+                else
+                {
+                    <p>Ingen bild</p>
+                }
+            </div>
+            <div class="cv-sections">
+                <div class="cv-education">
+                    <h3>Utbildning</h3>
+                    <ul>
+                        @foreach (var edu in Model.Educations)
+                        {
+                            <li>@edu.Name</li>
+                        }
+                    </ul>
+                </div>
+                <div class="cv-experience">
+                    <h3>Erfarenhet</h3>
+                    <ul>
+                        @foreach (var exp in Model.Experiences)
+                        {
+                            <li>@exp.JobTitle</li>
+                        }
+                    </ul>
+                </div>
+                <div class="cv-skills">
+                    <h3>Kompetens</h3>
+                    <ul>
+                        @foreach (var skill in Model.Skills)
+                        {
+                            <li>@skill.Name</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.UserId == (ViewBag.CurrentUserId as int?)) //Visar knappar för att göra ändringar/ta bort om det är inloggade användarens CV
         {
-            <div class="cv-card">
-                <div class="cv-header">
-                    <h2>@cv.FullName</h2>
-                    <p><strong>Adress:</strong> @cv.Adress</p>
-                    <p><strong>Telefonnummer:</strong> @cv.PhoneNumber</p>
-                </div>
-                <div class="cv-body">
-                    <div class="profile-image">
-                        @if (!string.IsNullOrEmpty(cv.ProfileImagePath))
-                        {
-                            <img src="@cv.ProfileImagePath" alt="Profilbild" />
-                        }
-                        else
-                        {
-                            <p>Ingen bild</p>
-                        }
-                    </div>
-                    <div class="cv-sections">
-                        <div class="cv-education">
-                            <h3>Utbildning</h3>
-                            <ul>
-                                @foreach (var edu in cv.Educations)
-                                {
-                                    <li>@edu.Name</li>
-                                }
-                            </ul>
-                        </div>
-                        <div class="cv-experience">
-                            <h3>Erfarenhet</h3>
-                            <ul>
-                                @foreach (var exp in cv.Experiences)
-                                {
-                                    <li>@exp.JobTitle</li>
-                                }
-                            </ul>
-                        </div>
-                        <div class="cv-skills">
-                            <h3>Kompetens</h3>
-                            <ul>
-                                @foreach (var skill in cv.Skills)
-                                {
-                                    <li>@skill.Name</li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="cv-actions">
-                    <a href="@Url.Action("Edit", "CV", new { id = cv.Id })" class="btn btn-warning">Redigera</a>
-                    <a href="@Url.Action("Delete", "CV", new { id = cv.Id })" class="btn btn-danger">Ta bort</a>
-                </div>
+            <div class="cv-actions">
+                <a href="@Url.Action("Edit", "CV", new { id = Model.Id })" class="btn btn-warning">Redigera</a>
+                <a href="@Url.Action("ChangePassword", "Account")" class="btn btn-warning">Ändra Lösenord</a>
+                <a href="@Url.Action("Delete", "CV", new { id = Model.Id })" class="btn btn-danger">Ta bort</a>
+            </div>
+        }
+        else
+        {
+            <div class="cv-actions">
+                <a asp-action="CreateMessage" asp-controller="Message" asp-route-receiverId="@Model.UserId" class="btn btn-primary">Skicka meddelande</a>
             </div>
         }
     </div>

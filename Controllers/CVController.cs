@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 
 
 namespace Grupp23_CV.Controllers
@@ -22,15 +23,32 @@ namespace Grupp23_CV.Controllers
             _environment = environment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int userId)
         {
-            var cvLista = _context.CVs
-                .Include(c => c.Educations)
-                .Include(c => c.Experiences)
-                .Include(c => c.Skills)
-                .ToList();
-            return View(cvLista);
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            // Om användaren är inloggad, lagra deras id
+            if (currentUser != null)
+            {
+                ViewBag.CurrentUserId = currentUser.Id;
+            }
+
+            // Hämta CV för användaren med det angivna userId
+            var userCV = _context.CVs
+                .Include(cv => cv.Educations)
+                .Include(cv => cv.Experiences)
+                .Include(cv => cv.Skills)
+                .FirstOrDefault(cv => cv.UserId == userId);
+
+            // Om CV:t inte finns, omdirigera till skapa-sidan
+            if (userCV == null)
+            {
+                return RedirectToAction("Create");
+            }
+
+            return View(userCV);
         }
+
 
         [Authorize]
         [HttpGet]
