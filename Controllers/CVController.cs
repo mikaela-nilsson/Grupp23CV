@@ -27,11 +27,7 @@ namespace Grupp23_CV.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
 
-            // Om användaren är inloggad, lagra deras id
-            if (currentUser != null)
-            {
-                ViewBag.CurrentUserId = currentUser.Id;
-            }
+            bool isOwnCV = currentUser != null && currentUser.Id == userId;
 
             // Hämta CV för användaren med det angivna userId
             var userCV = _context.CVs
@@ -41,12 +37,26 @@ namespace Grupp23_CV.Controllers
                 .FirstOrDefault(cv => cv.UserId == userId);
 
             // Om CV:t inte finns, omdirigera till skapa-sidan
-            if (userCV == null)
+            if (userCV == null && isOwnCV)
             {
                 return RedirectToAction("Create");
             }
 
-            return View(userCV);
+            var userProjects = await _context.Userprojects
+            .Where(up => up.UserId == userId)
+            .Include(up => up.Project)
+            .Select(up => up.Project)
+            .ToListAsync();
+
+            // Skicka både CV och projekten till vyn
+            var viewModel = new CVProjectsViewModel
+            {
+                CV = userCV,
+                Projects = userProjects,
+                IsOwnCV = isOwnCV
+            };
+
+            return View(viewModel);
         }
 
 

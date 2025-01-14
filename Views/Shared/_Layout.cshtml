@@ -23,55 +23,48 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="ReceivedMessages">Meddelanden</a>
-                        </li>
-
-
-                        <!-- Visa notifieringar -->
+                        <!--Visa notifieringar-->
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a href="/Message/Notifications" class="nav-link text-dark">
-                                    Notifieringar (<span id="unread-count">0</span>)
-                                </a>
-                            </li>
+                                <li class="nav-item">
+                                    <a href="/Message/ReceivedMessages" class="nav-link text-dark">
+                                        Meddelanden (<span id="unread-count">0</span>)
+                                    </a>
+                                </li>
                         }
-
 
                         <!-- Visa inloggningslänkar eller utloggningslänkar beroende på användarens status -->
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
-                                    <button type="submit" class="btn btn-link nav-link text-dark" style="padding: 0; border: none; background: none; margin-top: 8px;">
-                                        Logga ut
-                                    </button>
-                                </form>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Mina sidor
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" asp-controller="Project" asp-action="Create">Skapa projekt</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Project" asp-action="Index">Mina projekt</a></li>
-                                    <li><a class="dropdown-item" asp-controller="CV" asp-action="ViewCV">Mitt CV</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile">Mina uppgifter</a></li> <!-- Ny knapp -->
-
-                                </ul>
-                            </li>
+                                <li class="nav-item">
+                                    <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-link nav-link text-dark" style="padding: 0; border: none; background: none; margin-top: 8px;">
+                                            Logga ut
+                                        </button>
+                                    </form>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Mina sidor
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" asp-controller="Project" asp-action="Create">Skapa projekt</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Project" asp-action="Index">Mina projekt</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile">Mina uppgifter</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("ChangePassword", "Account")">Ändra Lösenord</a></li>
+                                    </ul>
+                                </li>
                         }
 
 
                         @if (!User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="LogIn">Logga in</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Registrera</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Account" asp-action="LogIn">Logga in</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Registrera</a>
+                                </li>
                         }
                     </ul>
                 </div>
@@ -95,3 +88,17 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+//JSON för notifieringar
+document.addEventListener("DOMContentLoaded", function () {
+if (document.getElementById("unread-count")) {
+    fetch('/Message/GetUnreadCount')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("unread-count").textContent = data.count;
+        })
+        .catch(error => console.error('Error fetching unread count:', error));
+}
+});
+</script>

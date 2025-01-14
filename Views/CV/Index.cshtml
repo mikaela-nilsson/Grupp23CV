@@ -1,88 +1,91 @@
-﻿@model CV
+﻿@model CVProjectsViewModel
 
-<h1>@((Model.UserId == (ViewBag.CurrentUserId as int?) ? "Ditt CV" : "Användarens CV"))</h1>
+<h1>@((Model.IsOwnCV ? "Ditt CV" : "Användarens CV"))</h1>
 
-@if (Model != null)
+@if (Model != null && Model.CV != null)
 {
-    <div class="cv-card">
-        <div class="cv-header">
-            <h2>@Model.FullName</h2>
-            <p><strong>Adress:</strong> @Model.Adress</p>
-            <p><strong>Telefonnummer:</strong> @Model.PhoneNumber</p>
-        </div>
-        <div class="cv-body">
-            <div class="profile-image">
-                @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+        <div class="cv-card">
+            <div class="cv-header">
+                <h2>@Model.CV.FullName</h2>
+                <p><strong>Adress:</strong> @Model.CV.Adress</p>
+                <p><strong>Telefonnummer:</strong> @Model.CV.PhoneNumber</p>
+            </div>
+            <div class="cv-body">
+                <div class="profile-image">
+                @if (!string.IsNullOrEmpty(Model.CV.ProfileImagePath))
                 {
-                    <img src="@Model.ProfileImagePath" alt="Profilbild" />
+                            <img src="@Model.CV.ProfileImagePath" alt="Profilbild" />
                 }
                 else
                 {
-                    <p>Ingen bild</p>
+                            <p>Ingen bild</p>
                 }
-            </div>
-            <div class="cv-sections">
-                <div class="cv-education">
-                    <h3>Utbildning</h3>
-                    <ul>
-                        @foreach (var edu in Model.Educations)
-                        {
-                            <li>@edu.Name</li>
-                        }
-                    </ul>
-                    @if (User.Identity.IsAuthenticated && Model.UserId == (ViewBag.CurrentUserId as int?))
-                    {
-                        <a href="@Url.Action("CreateEducation", "CV", new { cvId = Model.Id })" class="btn btn-primary">Lägg till utbildning</a>
-                    }
                 </div>
-                <div class="cv-experience">
-                    <h3>Erfarenhet</h3>
-                    <ul>
-                        @foreach (var exp in Model.Experiences)
+                <div class="cv-sections">
+                    <div class="cv-education">
+                        <h3>Utbildning</h3>
+                        <ul>
+                        @foreach (var edu in Model.CV.Educations)
                         {
-                            <li>@exp.JobTitle</li>
+                                    <li>@edu.Name</li>
                         }
-                    </ul>
-                    @if (User.Identity.IsAuthenticated && Model.UserId == (ViewBag.CurrentUserId as int?))
-                    {
-                        <a href="@Url.Action("CreateExperience", "CV", new { cvId = Model.Id })" class="btn btn-primary">Lägg till erfarenhet</a>
-                    }
-                </div>
-                <div class="cv-skills">
-                    <h3>Kompetens</h3>
-                    <ul>
-                        @foreach (var skill in Model.Skills)
+                        </ul>
+                    </div>
+                    <div class="cv-experience">
+                        <h3>Erfarenhet</h3>
+                        <ul>
+                        @foreach (var exp in Model.CV.Experiences)
                         {
-                            <li>@skill.Name</li>
+                                    <li>@exp.JobTitle</li>
                         }
-                    </ul>
-                    @if (User.Identity.IsAuthenticated && Model.UserId == (ViewBag.CurrentUserId as int?))
-                    {
-                        <a href="@Url.Action("CreateSkill", "CV", new { cvId = Model.Id })" class="btn btn-primary">Lägg till kompetens</a>      
-                    }
+                        </ul>
+                    </div>
+                    <div class="cv-skills">
+                        <h3>Kompetens</h3>
+                        <ul>
+                        @foreach (var skill in Model.CV.Skills)
+                        {
+                                    <li>@skill.Name</li>
+                        }
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        @if (Model.UserId == (ViewBag.CurrentUserId as int?)) //Visar knappar för att göra ändringar/ta bort om det är inloggade användarens CV
+            <h3>Projekt</h3>
+        @if (Model.Projects.Any())
         {
-            <div class="cv-actions">
-                <a href="@Url.Action("Edit", "CV", new { id = Model.Id })" class="btn btn-warning">Redigera</a>
-                <a href="@Url.Action("ChangePassword", "Account")" class="btn btn-warning">Ändra Lösenord</a>
-                <a href="@Url.Action("Delete", "CV", new { id = Model.Id })" class="btn btn-danger">Ta bort</a>
-            </div>
+                    <ul>
+                @foreach (var project in Model.Projects)
+                {
+                                <li>
+                                    <strong>@project.Title</strong>: @project.Description
+                                </li>
+                }
+                    </ul>
         }
         else
         {
-            <div class="cv-actions">
-                <a asp-action="CreateMessage" asp-controller="Message" asp-route-receiverId="@Model.UserId" class="btn btn-primary">Skicka meddelande</a>
-            </div>
+                    <p>Inga projekt hittades för denna användare.</p>
         }
-    </div>
+
+        @if (Model.IsOwnCV) //Visar knappar för att göra ändringar/ta bort om det är inloggade användarens CV
+        {
+                    <div class="cv-actions">
+                        <a href="@Url.Action("Edit", "CV", new { id = Model.CV.Id })" class="btn btn-warning">Redigera</a>
+                        <a href="@Url.Action("Delete", "CV", new { id = Model.CV.Id })" class="btn btn-danger">Ta bort</a>
+                    </div>
+        }
+        else
+        {
+                    <div class="cv-actions">
+                        <a asp-action="CreateMessage" asp-controller="Message" asp-route-receiverId="@Model.CV.UserId" class="btn btn-primary">Skicka meddelande</a>
+                    </div>
+        }
+        </div>
 }
 else
 {
-    <p>Du har inget CV än. <a href="@Url.Action("Create", "CV")" class="btn btn-primary">Skapa ett CV</a></p>
+        <p>Du har inget CV än. <a href="@Url.Action("Create", "CV")" class="btn btn-primary">Skapa ett CV</a></p>
 }
 
 <style>

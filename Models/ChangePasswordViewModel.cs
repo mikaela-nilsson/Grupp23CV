@@ -11,6 +11,8 @@ namespace Grupp23_CV.Models
 
         [Required(ErrorMessage = "Nytt lösenord får inte vara tomt")]
         [DataType(DataType.Password)]
+        [StringLength(100, ErrorMessage = "Nya lösenordet måste innehålla minst {1} tecken", MinimumLength = 6)]
+        [RegularExpression(@"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+", ErrorMessage = "Lösenordet måste innehålla minst en liten bokstav, en stor bokstav, en siffra och ett specialtecken.")]
         [Display(Name = "Nytt Lösenord")]
         public string NyttLosenord { get; set; }
 

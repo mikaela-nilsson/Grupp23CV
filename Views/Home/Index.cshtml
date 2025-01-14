@@ -20,7 +20,7 @@
     <div class="my-3 d-flex justify-content-center">
         @if (User.Identity.IsAuthenticated)
         {
-            <a asp-controller="CV" asp-action="Index" asp-route-userId="@Model.CurrentUserId" class="btn btn-secondary me-3">Visa/Ändra Mitt CV</a>
+            <a asp-controller="CV" asp-action="Index" asp-route-userId="@Model.CurrentUserId" class="btn btn-secondary me-3">Skapa/Visa/Ändra Mitt CV</a>
         }
         <a asp-action="Search" asp-controller="User" class="btn btn-outline-primary me-3">Sök efter en användare</a>
 
