@@ -23,9 +23,11 @@ namespace Grupp23_CV.Controllers
         public async Task<IActionResult> CreateMessage(int receiverId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
+
+            //Om avsändaren är inloggad används deras CV namn eller användarnamn som avsändarnamn
             string? senderName = currentUser != null
                 ? (await _context.CVs.FirstOrDefaultAsync(c => c.UserId == currentUser.Id))?.FullName ?? currentUser.UserName
-                : null;
+                : null; 
 
             var model = new Message
             {
@@ -67,7 +69,7 @@ namespace Grupp23_CV.Controllers
 
             var message = new Message
             {
-                SenderId = user?.Id,
+                SenderId = user?.Id, //Kan vara null om avsändaren inte är inloggad
                 SenderName = senderName,
                 ReceiverId = model.ReceiverId,
                 Content = model.Content,
@@ -79,7 +81,7 @@ namespace Grupp23_CV.Controllers
 
             TempData["SuccessMessage"] = "Meddelandet skickades!";
             ModelState.Clear();
-            model.Content = string.Empty;
+            model.Content = string.Empty; //Rensar textrutan efter att ett meddelande har skickats
             return View(model);
         }
 
@@ -93,13 +95,15 @@ namespace Grupp23_CV.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            //Hämta alla meddelanden som inte har satts till "läst"
             var unreadMessages = await _context.Messages
             .Where(m => m.ReceiverId == currentUser.Id && !m.IsRead)
             .ToListAsync();
 
-            return View(unreadMessages); //Skicka olästa meddelanden till view:en
+            return View(unreadMessages);
         }
 
+        //Denna metod tar emot en lista med de meddelanden som man valt att ändra till "läst"
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> SaveChanges(List<int> IsRead)
@@ -127,6 +131,7 @@ namespace Grupp23_CV.Controllers
             return RedirectToAction("ReceivedMessages");
         }
 
+        //Denna metod hämtar alla användarens meddelanden som sattes till "läst"
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> ReadMessages()
@@ -144,6 +149,7 @@ namespace Grupp23_CV.Controllers
             return View(readMessages);
         }
 
+        //Denna metod tar emot en lista på alla meddelande id som man valt att radera
         [HttpPost]
         [Authorize]
         public IActionResult ConfirmDelete(List<int> SelectedMessages)
@@ -183,6 +189,7 @@ namespace Grupp23_CV.Controllers
             return RedirectToAction("ReadMessages");
         }
 
+        //Denna metod skickar användaren till sidan med deras "olästa" meddelanden
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Notifications()
@@ -209,34 +216,13 @@ namespace Grupp23_CV.Controllers
                 return Json(new { count = 0 });
             }
 
+            // Räkna antalet "olästa" meddelanden
             var unreadCount = await _context.Messages
                 .Where(m => m.ReceiverId == currentUser.Id && !m.IsRead)
                 .CountAsync();
 
+            // Returnera resultatet som JSON för att kunna dynamiskt uppdatera i webbläsaren med hjälp av JavaScript
             return Json(new { count = unreadCount });
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> MarkAsRead(int messageId)
-        {
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            var message = await _context.Messages
-                .FirstOrDefaultAsync(m => m.Id == messageId && m.ReceiverId == currentUser.Id);
-
-            if (message != null)
-            {
-                message.IsRead = true;
-                _context.Messages.Update(message);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction("Notifications");
         }
     }
 }
