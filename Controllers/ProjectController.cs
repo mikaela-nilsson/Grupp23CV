@@ -12,16 +12,23 @@ namespace Grupp23_CV.Controllers
 
         private readonly ApplicationUserDbContext _context;
 
+        // Context skickas in som parameter när controllern skapas, representerar en instans av klassenApplicationUserDdbContext
+        // som interagera med databasen, t.ex. för att hämta, skapa, uppdatera eller ta bort data.
+
         public ProjectController(ApplicationUserDbContext context)
         {
             _context = context;
         }
 
+        //Metod som returnerar ett resultat/vy och en lista av typen project deklareras som lagrar projekten som ska visas i vyn
+        //e
+
         public IActionResult Index()
         {
             List<Project> projectLista;
 
-            // Kontrollera om användaren är inloggad
+            // Kontrollera om användaren är inloggad och hämtar då användarens unika ID från användarens inloggningsinformation.
+            // Om det ej finns returneras "Unathorized" respons med felmeddelande
             if (User.Identity.IsAuthenticated)
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -30,9 +37,12 @@ namespace Grupp23_CV.Controllers
                     return Unauthorized("Användarens ID hittades inte.");
                 }
 
+
+                // Hämtar alla projekt som är kopplade till den inloggade användaren från databasen.
+                // Filtrerar poster i Userprojects där UserId matchar det angivna userId.
+                // Använder relationen mellan Userprojects och Projects för att hämta Project-objekt baserat på ProjectId.
                 var userId = int.Parse(userIdClaim.Value);
 
-                // Hämta projekt kopplade till den inloggade användaren
                 projectLista = _context.Userprojects
                     .Where(up => up.UserId == userId)
                     .Select(up => up.Project)
@@ -41,15 +51,19 @@ namespace Grupp23_CV.Controllers
             else
             {
                 // Hämta alla projekt som endast visar titel och beskrivning för utloggade användare
-                projectLista = _context.Projects.ToList();
+                // Om användaren inte är inloggad, visas endast projekt som tillhör offentliga profiler.
+                 projectLista = _context.Projects
+               .Where(p => p.UserProjects.Any(up => !up.User.IsPrivate))
+               .ToList();
             }
 
+            //Skickar projektlistan till den tillhörande vyn, där den visas för användaren.
             return View(projectLista);
         }
 
 
 
-        //Skapar vyn
+        //När denna metod anropas, returneras den vy där man skapar ett projekt
         [HttpGet]
         public IActionResult Create()
         {
@@ -137,18 +151,56 @@ namespace Grupp23_CV.Controllers
             return View(project);
         }
 
+     
+
         public IActionResult AllProjects()
         {
             // Hämta alla projekt
             var allProjects = _context.Projects
                 .Include(p => p.UserProjects) // Ladda användarrelationer
-                .ThenInclude(up => up.User) // Ladda användarobjekt
+                .ThenInclude(up => up.User)  // Ladda användarobjekt
                 .ToList();
 
-            ViewBag.IsAuthenticated = User.Identity.IsAuthenticated; // Kolla om användaren är inloggad
-            return View(allProjects);
+            return View(allProjects); // Skicka alla projekt till vyn
         }
 
+
+
+        //[HttpPost]
+        //public IActionResult JoinProject(int id, string redirectTo = "AllProjects")
+        //{
+        //    if (!User.Identity.IsAuthenticated)
+        //    {
+        //        return Unauthorized("Du måste vara inloggad för att koppla dig till ett projekt.");
+        //    }
+
+        //    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+        //    // Kontrollera om användaren redan är kopplad till projektet
+        //    var existingConnection = _context.Userprojects
+        //        .FirstOrDefault(up => up.UserId == userId && up.ProjectId == id);
+
+        //    if (existingConnection == null)
+        //    {
+        //        var userProject = new UserProject
+        //        {
+        //            UserId = userId,
+        //            ProjectId = id
+        //        };
+        //        _context.Userprojects.Add(userProject);
+        //        _context.SaveChanges();
+
+        //        TempData["JoinMessage"] = "Nu har du kopplat projektet till din profil!";
+        //        TempData["JoinedProjectId"] = id; // Lägg till projekt-ID
+        //    }
+        //    else
+        //    {
+        //        TempData["JoinMessage"] = "Du är redan kopplad till detta projekt.";
+        //        TempData["JoinedProjectId"] = id; // Lägg till projekt-ID
+        //    }
+
+        //    return RedirectToAction("Index", "Home");
+        //}
 
         [HttpPost]
         public IActionResult JoinProject(int id, string redirectTo = "AllProjects")
@@ -164,8 +216,15 @@ namespace Grupp23_CV.Controllers
             var existingConnection = _context.Userprojects
                 .FirstOrDefault(up => up.UserId == userId && up.ProjectId == id);
 
-            if (existingConnection == null)
+            if (existingConnection != null)
             {
+                // Användaren är redan med i projektet
+                TempData["JoinMessage"] = "Du är redan kopplad till detta projekt.";
+                TempData["JoinedProjectId"] = id;
+            }
+            else
+            {
+                // Lägg till användaren till projektet
                 var userProject = new UserProject
                 {
                     UserId = userId,
@@ -175,16 +234,12 @@ namespace Grupp23_CV.Controllers
                 _context.SaveChanges();
 
                 TempData["JoinMessage"] = "Nu har du kopplat projektet till din profil!";
-                TempData["JoinedProjectId"] = id; // Lägg till projekt-ID
-            }
-            else
-            {
-                TempData["JoinMessage"] = "Du är redan kopplad till detta projekt.";
-                TempData["JoinedProjectId"] = id; // Lägg till projekt-ID
+                TempData["JoinedProjectId"] = id;
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(redirectTo);
         }
+
 
 
 

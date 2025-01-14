@@ -22,13 +22,14 @@
         {
             <a asp-controller="CV" asp-action="Index" asp-route-userId="@Model.CurrentUserId" class="btn btn-secondary me-3">Visa/Ändra Mitt CV</a>
         }
-            <a asp-action="Search" asp-controller="User" class="btn btn-outline-primary me-3">Sök efter en användare</a>
+        <a asp-action="Search" asp-controller="User" class="btn btn-outline-primary me-3">Sök efter en användare</a>
 
-            <a asp-controller="Project" asp-action="AllProjects" class="btn btn-secondary">Se alla projekt</a>
+        <a asp-controller="Project" asp-action="AllProjects" class="btn btn-secondary">Se alla projekt</a>
     </div>
 
     <h2 class="mt-5">CV:n</h2>
 </div>
+
 <div class="row row-cols-1 row-cols-md-3 g-4">
     @foreach (var cv in Model.CVs)
     {
@@ -50,36 +51,36 @@
 <h2 class="mt-5">Senaste upplagda projektet</h2>
 @if (Model.LatestProject != null)
 {
-	<div class="card">
-		<div class="card-body">
-			<h4 class="card-title">@Model.LatestProject.Title</h4>
-			<p class="card-text">@Model.LatestProject.Description</p>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">@Model.LatestProject.Title</h4>
+            <p class="card-text">@Model.LatestProject.Description</p>
 
-			@if (User.Identity.IsAuthenticated)
-			{
-				<form asp-controller="Project" asp-action="JoinProject" method="post">
-					<input type="hidden" name="id" value="@Model.LatestProject.ProjectId" />
-					<button type="submit" class="btn btn-success">Koppla projekt till din profil</button>
-				</form>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form asp-controller="Project" asp-action="JoinProject" method="post">
+                    <input type="hidden" name="id" value="@Model.LatestProject.ProjectId" />
+                    <button type="submit" class="btn btn-success">Koppla projekt till din profil</button>
+                </form>
 
-				<!-- Visa meddelande om det gäller detta projekt -->
-				@if (TempData["JoinMessage"] != null &&
-						TempData["JoinedProjectId"] != null &&
-						(int)TempData["JoinedProjectId"] == Model.LatestProject.ProjectId)
-				{
-					<span class="text-success">@TempData["JoinMessage"]</span>
-				}
-			}
-			else
-			{
-				<a asp-controller="Account" asp-action="Login" class="btn btn-primary">Logga in för att koppla dig till detta projekt</a>
-			}
-		</div>
-	</div>
+                <!-- Visa valideringsmeddelande -->
+                @if (TempData["JoinMessage"] != null &&
+               TempData["JoinedProjectId"] != null &&
+               (int)TempData["JoinedProjectId"] == Model.LatestProject.ProjectId)
+                {
+                    <div class="alert alert-info mt-2">
+                        @TempData["JoinMessage"]
+                    </div>
+                }
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Logga in för att koppla dig till detta projekt</a>
+            }
+        </div>
+    </div>
 }
 else
 {
-	<p>Det finns inga projekt att visa just nu.</p>
+    <p>Det finns inga projekt att visa just nu.</p>
 }
-
-
