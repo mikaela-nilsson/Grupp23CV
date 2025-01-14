@@ -63,7 +63,7 @@
                     <button type="submit" class="btn btn-success">Koppla projekt till din profil</button>
                 </form>
 
-                <!-- Visa valideringsmeddelande -->
+                // Visa valideringsmeddelande
                 @if (TempData["JoinMessage"] != null &&
                TempData["JoinedProjectId"] != null &&
                (int)TempData["JoinedProjectId"] == Model.LatestProject.ProjectId)
