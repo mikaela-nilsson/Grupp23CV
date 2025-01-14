@@ -78,7 +78,7 @@
     <div class="form-buttons">
         <form method="post">
             <button type="submit" class="btn btn-danger">Ja, radera</button>
-            <a href="@Url.Action("Index", "CV")" class="btn btn-secondary">Avbryt</a>
+            <a href="@Url.Action("Index", "CV", new {userId = Model.UserId})" class="btn btn-secondary">Avbryt</a>
         </form>
     </div>
 </div>

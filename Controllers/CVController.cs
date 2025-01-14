@@ -59,9 +59,12 @@ namespace Grupp23_CV.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create(CV model, IFormFile profileImage)
+        public async Task<IActionResult> Create(CV model, IFormFile? profileImage)
         {
-            if (!ModelState.IsValid)
+            ModelState.Remove("ProfileImagePath");
+            ModelState.Remove("User");
+
+            if (ModelState.IsValid)
             {
                 var user = await _userManager.GetUserAsync(User);
 
@@ -85,7 +88,7 @@ namespace Grupp23_CV.Controllers
                 _context.CVs.Add(model);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("CreateEducation", new { cvId = model.Id });
+                return RedirectToAction("Index", new {userId = model.UserId});
             }
             return View(model);
         }
@@ -136,8 +139,8 @@ namespace Grupp23_CV.Controllers
                 return View(education);
             }
             var cv = await _context.CVs
-                    .Include(c => c.Educations)
-                    .FirstOrDefaultAsync(c => c.Id == education.CvId);
+                    .Include(cv => cv.Educations)
+                    .FirstOrDefaultAsync(cv => cv.Id == education.CvId);
 
             if (cv == null)
             {
@@ -147,7 +150,7 @@ namespace Grupp23_CV.Controllers
             _context.Educations.Add(education);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("CreateExperience", new { cvId = education.CvId });
+            return RedirectToAction("Index", new { userId = cv.UserId });
         }
 
         [HttpGet]
@@ -172,8 +175,8 @@ namespace Grupp23_CV.Controllers
             }
 
             var cv = await _context.CVs
-                .Include(c => c.Experiences)
-                .FirstOrDefaultAsync(c => c.Id == experience.CvId);
+                .Include(cv => cv.Experiences)
+                .FirstOrDefaultAsync(cv => cv.Id == experience.CvId);
 
             if (cv == null)
             {
@@ -183,7 +186,7 @@ namespace Grupp23_CV.Controllers
             _context.Experiences.Add(experience);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("CreateSkill", new { cvId = experience.CvId });
+            return RedirectToAction("Index", new { userId = cv.UserId });
         }
 
         [HttpGet]
@@ -208,8 +211,8 @@ namespace Grupp23_CV.Controllers
             }
 
             var cv = await _context.CVs
-                .Include(c => c.Skills)
-                .FirstOrDefaultAsync(c => c.Id == skill.CvId);
+                .Include(cv => cv.Skills)
+                .FirstOrDefaultAsync(cv => cv.Id == skill.CvId);
 
             if (cv == null)
             {
@@ -219,43 +222,17 @@ namespace Grupp23_CV.Controllers
             _context.Skills.Add(skill);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", new { id = skill.CvId });
-        }
-
-        public IActionResult Details(int id)
-        {
-            var cv = _context.CVs
-                .Include(c => c.Educations)
-                .Include(c => c.Skills)
-                .Include(c => c.Experiences)
-                .FirstOrDefault(c => c.Id == id);
-            if (cv == null)
-            {
-                return NotFound();
-            }
-            return View(cv);
-        }
-
-        [HttpPost]
-        public IActionResult Complete(int id)
-        {
-            var cv = _context.CVs.Include(c => c.Educations).FirstOrDefault(c => c.Id == id);
-            if (cv == null)
-            {
-                return NotFound();
-            }
-            _context.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { userId = cv.UserId });
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var cv = await _context.CVs
-                .Include(c => c.Educations)
-                .Include(c => c.Experiences)
-                .Include(c => c.Skills)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .Include(cv => cv.Educations)
+                .Include(cv => cv.Experiences)
+                .Include(cv => cv.Skills)
+                .FirstOrDefaultAsync(cv => cv.Id == id);
 
             if (cv == null)
             {
@@ -285,10 +262,10 @@ namespace Grupp23_CV.Controllers
             if (ModelState.IsValid)
             {
                 var exCv = await _context.CVs
-                    .Include(c => c.Educations)
-                    .Include(c => c.Experiences)
-                    .Include(c => c.Skills)
-                    .FirstOrDefaultAsync(c => c.Id == model.Id);
+                    .Include(cv => cv.Educations)
+                    .Include(cv => cv.Experiences)
+                    .Include(cv => cv.Skills)
+                    .FirstOrDefaultAsync(cv => cv.Id == model.Id);
 
                 if (exCv == null)
                 {
@@ -343,7 +320,7 @@ namespace Grupp23_CV.Controllers
 
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new {userId = exCv.UserId});
             }
             return View(model);
         }
@@ -352,10 +329,10 @@ namespace Grupp23_CV.Controllers
         public IActionResult Delete(int id)
         {
             var cv = _context.CVs
-                .Include(c => c.Educations)
-                .Include(c => c.Experiences)
-                .Include(c => c.Skills)
-                .FirstOrDefault(c => c.Id == id);
+                .Include(cv => cv.Educations)
+                .Include(cv => cv.Experiences)
+                .Include(cv => cv.Skills)
+                .FirstOrDefault(cv => cv.Id == id);
 
             if (cv == null)
             {
@@ -384,35 +361,7 @@ namespace Grupp23_CV.Controllers
                 _context.CVs.Remove(cv);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("Index");
-        }
-
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> ViewCV()
-        {
-            // Hämta den inloggade användarens ID
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            // Hämta CV:t som är kopplat till användaren
-            var cv = await _context.CVs
-                .Include(c => c.Educations)
-                .Include(c => c.Experiences)
-                .Include(c => c.Skills)
-                .FirstOrDefaultAsync(c => c.UserId == user.Id);
-
-            if (cv == null)
-            {
-                return NotFound("Inget CV hittades för den inloggade användaren.");
-            }
-
-            return View("Details", cv); // Visa CV i "Details"-vyn
+            return RedirectToAction("Index", "Home", new { userId = cv.UserId });
         }
     }
 }

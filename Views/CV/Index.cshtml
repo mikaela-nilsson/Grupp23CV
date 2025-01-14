@@ -30,6 +30,10 @@
                             <li>@edu.Name</li>
                         }
                     </ul>
+                    @if (User.Identity.IsAuthenticated && Model.UserId == (ViewBag.CurrentUserId as int?))
+                    {
+                        <a href="@Url.Action("CreateEducation", "CV", new { cvId = Model.Id })" class="btn btn-primary">Lägg till utbildning</a>
+                    }
                 </div>
                 <div class="cv-experience">
                     <h3>Erfarenhet</h3>
@@ -39,6 +43,10 @@
                             <li>@exp.JobTitle</li>
                         }
                     </ul>
+                    @if (User.Identity.IsAuthenticated && Model.UserId == (ViewBag.CurrentUserId as int?))
+                    {
+                        <a href="@Url.Action("CreateExperience", "CV", new { cvId = Model.Id })" class="btn btn-primary">Lägg till erfarenhet</a>
+                    }
                 </div>
                 <div class="cv-skills">
                     <h3>Kompetens</h3>
@@ -48,6 +56,10 @@
                             <li>@skill.Name</li>
                         }
                     </ul>
+                    @if (User.Identity.IsAuthenticated && Model.UserId == (ViewBag.CurrentUserId as int?))
+                    {
+                        <a href="@Url.Action("CreateSkill", "CV", new { cvId = Model.Id })" class="btn btn-primary">Lägg till kompetens</a>      
+                    }
                 </div>
             </div>
         </div>
