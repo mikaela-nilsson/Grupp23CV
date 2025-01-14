@@ -25,11 +25,12 @@ namespace Grupp23_CV.Controllers
 
         public async Task<IActionResult> Index(int userId)
         {
+            //Hämtar den aktuella användaren som är inloggad
             var currentUser = await _userManager.GetUserAsync(User);
 
             bool isOwnCV = currentUser != null && currentUser.Id == userId;
 
-            // Hämta CV för användaren med det angivna userId
+            // Hämta CV för användaren med det angivna userId och inkludera relaterade data
             var userCV = _context.CVs
                 .Include(cv => cv.Educations)
                 .Include(cv => cv.Experiences)
@@ -42,6 +43,7 @@ namespace Grupp23_CV.Controllers
                 return RedirectToAction("Create");
             }
 
+            //Hämta alla projekt kopplade till användaren
             var userProjects = await _context.Userprojects
             .Where(up => up.UserId == userId)
             .Include(up => up.Project)
@@ -71,11 +73,13 @@ namespace Grupp23_CV.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CV model, IFormFile? profileImage)
         {
+            //Tar bort validering för dessa fält 
             ModelState.Remove("ProfileImagePath");
             ModelState.Remove("User");
 
             if (ModelState.IsValid)
             {
+                //Hämtar den inloggade användaren
                 var user = await _userManager.GetUserAsync(User);
 
                 if (user == null)
@@ -83,6 +87,7 @@ namespace Grupp23_CV.Controllers
                     return RedirectToAction("Login", "Account");
                 }
 
+                //Sätter användarens ID på CV:t
                 model.UserId = user.Id;
 
                 if (profileImage != null && profileImage.Length > 0)
@@ -95,6 +100,7 @@ namespace Grupp23_CV.Controllers
                     }
                 }
 
+                //Lägger till det nya CV:t i databasen
                 _context.CVs.Add(model);
                 await _context.SaveChangesAsync();
 
@@ -109,13 +115,15 @@ namespace Grupp23_CV.Controllers
 
             if (file != null && file.Length > 0)
             {
-                string upload = Path.Combine(_environment.WebRootPath, "Images");
+                string upload = Path.Combine(_environment.WebRootPath, "Images"); //Hämtar sökvägen till katalogen för uppladdningar
 
+                //Skapa katalogen om den inte finns
                 if (!Directory.Exists(upload))
                 {
                     Directory.CreateDirectory(upload);
                 }
 
+                //Generera ett filnamn
                 fileName = Guid.NewGuid().ToString() + "-" + Path.GetFileName(file.FileName);
 
                 string filePath = Path.Combine(upload, fileName);
@@ -138,25 +146,30 @@ namespace Grupp23_CV.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEducation(Education education)
         {
+            //Kontrollerar om modellen är giltig
             if (!ModelState.IsValid)
             {
                 return View(education);
             }
 
+            //Kontrollera att utbildning är associerad med ett CV
             if (education.CvId == 0)
             {
                 ModelState.AddModelError("CVId", "CV är inte korrekt associerat.");
                 return View(education);
             }
+
+            //Hämtar CV:t som utbildningen ska associera med
             var cv = await _context.CVs
                     .Include(cv => cv.Educations)
-                    .FirstOrDefaultAsync(cv => cv.Id == education.CvId);
+                    .FirstOrDefaultAsync(cv => cv.Id == education.CvId); //Matcha med det angivna CvId
 
             if (cv == null)
             {
                 return NotFound($"Ett CV med ID {education.CvId} kunde inte hittas.");
             }
 
+            //Lägger till utbildningen i databasen
             _context.Educations.Add(education);
             await _context.SaveChangesAsync();
 
@@ -238,6 +251,7 @@ namespace Grupp23_CV.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            //Hämtar info från databasen
             var cv = await _context.CVs
                 .Include(cv => cv.Educations)
                 .Include(cv => cv.Experiences)
@@ -269,8 +283,10 @@ namespace Grupp23_CV.Controllers
                 }
             }
 
+            //Kontrollera om modellen är giltig innan uppdatering
             if (ModelState.IsValid)
             {
+                //Hämtar det existerande CV:T från databasen
                 var exCv = await _context.CVs
                     .Include(cv => cv.Educations)
                     .Include(cv => cv.Experiences)
@@ -282,6 +298,7 @@ namespace Grupp23_CV.Controllers
                     return NotFound();
                 }
 
+                //Uppdatera grundläggande fält
                 exCv.FullName = model.FullName;
                 exCv.Adress = model.Adress;
                 exCv.PhoneNumber = model.PhoneNumber;
@@ -291,6 +308,7 @@ namespace Grupp23_CV.Controllers
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(profileImage.FileName);
                     var path = Path.Combine("wwwroot/images", fileName);
 
+                    //Spara profilbilden på servern
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         await profileImage.CopyToAsync(stream);
@@ -298,10 +316,12 @@ namespace Grupp23_CV.Controllers
                     exCv.ProfileImagePath = "/images/" + fileName;
                 }
 
+                //Tar bort relaterade data
                 _context.Educations.RemoveRange(exCv.Educations);
                 _context.Experiences.RemoveRange(exCv.Experiences);
                 _context.Skills.RemoveRange(exCv.Skills);
 
+                //Lägger till nya data
                 if (model.Educations != null)
                 {
                     foreach (var education in model.Educations)
@@ -354,11 +374,11 @@ namespace Grupp23_CV.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            //Hämtar CV:t från databasen med FindAsync
             var cv = await _context.CVs.FindAsync(id);
             if (cv != null)
             {
-                _context.CVs.Remove(cv);
-
+                //Tar bort tillhörande profilbilder 
                 if (!string.IsNullOrEmpty(cv.ProfileImagePath))
                 {
                     var filePath = Path.Combine(_environment.WebRootPath, cv.ProfileImagePath.TrimStart('/'));
@@ -368,7 +388,11 @@ namespace Grupp23_CV.Controllers
                         System.IO.File.Delete(filePath);
                     }
                 }
+
+                //Tar bort CV:t från databasen
                 _context.CVs.Remove(cv);
+
+                //Sparar ändringar i databasen asynkront
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("Index", "Home", new { userId = cv.UserId });
