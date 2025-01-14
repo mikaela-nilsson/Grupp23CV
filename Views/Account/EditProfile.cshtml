@@ -1,0 +1,38 @@
+﻿@model Grupp23_CV.Models.EditProfileViewModel
+
+<h1>Min Profil</h1>
+
+<form method="post">
+    <!-- Fält för fullständigt namn -->
+    <div class="form-group">
+        <label for="FullName">Fullständigt namn</label>
+        <input asp-for="FullName" class="form-control" placeholder="Fyll i ditt fullständiga namn" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+
+    <!-- Fält för Adress -->
+    <div class="form-group">
+        <label for="Adress">Adress</label>
+        <input asp-for="Adress" class="form-control" placeholder="Fyll i din Adress" />
+        <span asp-validation-for="Adress" class="text-danger"></span>
+    </div>
+
+    <!-- Fält för telefonnummer -->
+    <div class="form-group">
+        <label for="PhoneNumber">Telefonnummer</label>
+        <input asp-for="PhoneNumber" class="form-control" placeholder="Fyll i ditt telefonnummer" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <!-- Dropdown för profilstatus -->
+    <div class="form-group">
+        <label for="IsPrivate">Profilstatus</label>
+        <select asp-for="IsPrivate" asp-items="Model.IsPrivateOptions" class="form-control">
+            <option value="" disabled selected>Välj profilstatus</option>
+        </select>
+    </div>
+
+    <!-- Spara-knapp -->
+    <button type="submit" class="btn btn-primary">Spara ändringar</button>
+</form>
+

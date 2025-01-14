@@ -27,6 +27,18 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="ReceivedMessages">Meddelanden</a>
                         </li>
 
+
+                        <!-- Visa notifieringar -->
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a href="/Message/Notifications" class="nav-link text-dark">
+                                    Notifieringar (<span id="unread-count">0</span>)
+                                </a>
+                            </li>
+                        }
+
+
                         <!-- Visa inloggningslänkar eller utloggningslänkar beroende på användarens status -->
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -44,6 +56,8 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" asp-controller="Project" asp-action="Create">Skapa projekt</a></li>
                                     <li><a class="dropdown-item" asp-controller="Project" asp-action="Index">Mina projekt</a></li>
+                                    <li><a class="dropdown-item" asp-controller="CV" asp-action="ViewCV">Mitt CV</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile">Mina uppgifter</a></li> <!-- Ny knapp -->
 
                                 </ul>
                             </li>

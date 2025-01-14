@@ -386,5 +386,33 @@ namespace Grupp23_CV.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ViewCV()
+        {
+            // Hämta den inloggade användarens ID
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Hämta CV:t som är kopplat till användaren
+            var cv = await _context.CVs
+                .Include(c => c.Educations)
+                .Include(c => c.Experiences)
+                .Include(c => c.Skills)
+                .FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+            if (cv == null)
+            {
+                return NotFound("Inget CV hittades för den inloggade användaren.");
+            }
+
+            return View("Details", cv); // Visa CV i "Details"-vyn
+        }
     }
 }

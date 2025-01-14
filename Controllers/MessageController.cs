@@ -182,5 +182,61 @@ namespace Grupp23_CV.Controllers
 
             return RedirectToAction("ReadMessages");
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Notifications()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var unreadMessages = await _context.Messages
+                .Where(m => m.ReceiverId == currentUser.Id && !m.IsRead)
+                .ToListAsync();
+
+            return View(unreadMessages);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUnreadCount()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return Json(new { count = 0 });
+            }
+
+            var unreadCount = await _context.Messages
+                .Where(m => m.ReceiverId == currentUser.Id && !m.IsRead)
+                .CountAsync();
+
+            return Json(new { count = unreadCount });
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> MarkAsRead(int messageId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var message = await _context.Messages
+                .FirstOrDefaultAsync(m => m.Id == messageId && m.ReceiverId == currentUser.Id);
+
+            if (message != null)
+            {
+                message.IsRead = true;
+                _context.Messages.Update(message);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Notifications");
+        }
     }
 }

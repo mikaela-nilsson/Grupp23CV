@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Grupp23_CV.Models.Message>
+
+<h2>Notifieringar</h2>
+<p>Du har @Model.Count() olästa meddelanden.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Avsändare</th>
+            <th>Meddelande</th>
+            <th>Datum</th>
+            <th>Markera som läst</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var message in Model)
+        {
+            <tr>
+                <td>@message.SenderId</td>
+                <td>@message.Content</td>
+                <td>@message.SentDate.ToShortDateString()</td>
+                <td>
+                    <form asp-action="MarkAsRead" method="post">
+                        <input type="hidden" name="messageId" value="@message.Id" />
+                        <button type="submit" class="btn btn-primary">Markera som läst</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

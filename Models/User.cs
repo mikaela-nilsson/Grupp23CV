@@ -18,6 +18,6 @@ namespace Grupp23_CV.Models
                                            //OSÄKER PÅ OM BÅDA BEHÖVS, ELLER ENDAST EN AV DEM??
         public virtual List<UserProject> User_Projects { get; set; } = new(); // Koppling till projekt
     }
-}
+    }
 
 

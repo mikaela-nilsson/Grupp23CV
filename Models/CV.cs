@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Grupp23_CV.Models
 {
-    //CV ansvarar för att lagra detaljerad profilinformation som kontaktuppgifter, kompetenser, utbildningar, erfarenheter och projekt.
+    // CV ansvarar för att lagra detaljerad profilinformation som kontaktuppgifter, kompetenser, utbildningar, erfarenheter och projekt.
     public class CV
     {
         [Key]
@@ -31,11 +32,14 @@ namespace Grupp23_CV.Models
         [Display(Name = "Profilbild")]
         public string? ProfileImagePath { get; set; }
 
-        // Relationer till andra entiteter. Ett cv kan innehålla flera skills, educations, exeperiences. Dvs 1:N samband. Vet ej om man kan ha med detta här under??
+        // Ny egenskap: Bestämmer om CV:t är privat eller offentligt
+        [Display(Name = "Privat")]
+        public bool IsPrivate { get; set; } = true; // Standard: Privat
+
+        // Relationer till andra entiteter
         public virtual List<Education>? Educations { get; set; } = new(); // Utbildningar
         public virtual List<Experience>? Experiences { get; set; } = new(); // Erfarenheter
         public virtual List<Skill>? Skills { get; set; } = new(); // Kompetenser
-
-
     }
 }
+

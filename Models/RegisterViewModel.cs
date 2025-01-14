@@ -15,5 +15,9 @@ namespace Grupp23_CV.Models
 		[DataType(DataType.Password)]
 		[Display(Name = "Bekrafta losenordet")]
 		public string BekraftaLosenord { get; set; }
-	}
+        [Required]
+        [Display(Name = "Gör profilen privat")]
+        public bool IsPrivate { get; set; } // Anger om profilen är privat
+
+    }
 }
